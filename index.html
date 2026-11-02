@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Fiche Calcanéum</title>
+<meta name="theme-color" content="#0E6670">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fiche Calcanéum">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+/* Layout: une colonne de sections, en-tête fixe à trois onglets, barre AOFAS fixe en bas de la saisie. Fonctionne hors ligne (polices système). */
+:root{
+  --paper:#F4F6F8; --sheet:#FFFFFF; --ink:#16283B; --muted:#5A6878; --line:#D6DDE5;
+  --accent:#0E6670; --accent-ink:#FFFFFF; --accent-soft:#DDEFF0;
+  --warn:#9A4A0B; --warn-soft:#FCEBDC; --ok:#22633A; --ok-soft:#DFF1E5; --danger:#A3242B;
+  --font:system-ui,"Roboto","Segoe UI",Arial,sans-serif;
+  --mono:ui-monospace,"Roboto Mono","Cascadia Mono",Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#0F171F; --sheet:#16212C; --ink:#E4EAF0; --muted:#97A5B4; --line:#2B3946;
+  --accent:#4FB7BF; --accent-ink:#06262A; --accent-soft:#173A3F;
+  --warn:#F0A766; --warn-soft:#3A2614; --ok:#7FD39B; --ok-soft:#15301F; --danger:#F08A8F; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.45;padding-top:env(safe-area-inset-top,0px)}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:0;z-index:5;background:var(--sheet);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:9px;flex-wrap:wrap}
+.brand b{font-size:17px}
+.sync{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
+.dot.pending{background:var(--warn)}
+.tabs{display:flex;gap:4px;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:3px;width:100%}
+.tabs button{flex:1;border:0;background:transparent;color:var(--muted);font:600 14px var(--font);padding:8px 6px;border-radius:7px}
+.tabs button[aria-selected="true"]{background:var(--sheet);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.tabs .count{font-family:var(--mono);font-size:12px;color:var(--accent);margin-left:4px}
+main{padding-block:14px 130px}
+.notice{border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:12px;border:1px solid var(--line);background:var(--sheet)}
+.notice.warn{background:var(--warn-soft);border-color:transparent;color:var(--warn)}
+.notice.ok{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+section.block{background:var(--sheet);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+section.block h2{margin:0;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);padding:12px 14px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+section.block h2 small{font-family:var(--mono);text-transform:none;letter-spacing:0;color:var(--muted);font-weight:500}
+.field{padding:11px 14px;border-bottom:1px solid var(--line);display:grid;gap:7px}
+.field:last-child{border-bottom:0}
+.lab{font-weight:600;font-size:14px}
+.hint{font-weight:400;color:var(--muted);font-size:12.5px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--paper);color:var(--ink);font:500 14px var(--font);padding:8px 11px;border-radius:999px;line-height:1.2;text-align:left}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip .pts{font-family:var(--mono);font-size:12px;opacity:.75;margin-left:4px}
+.scale .chip{min-width:38px;text-align:center;font-family:var(--mono);padding:8px 0}
+input[type=text],input[type=number],input[type=date],input[type=url],textarea{font:15px var(--font);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:9px 10px;width:100%}
+input[type=number]{max-width:120px}
+textarea{min-height:72px;resize:vertical}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.auto{font-family:var(--mono);font-size:14px;color:var(--muted)}
+.auto b{color:var(--ink)}
+.tally{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--sheet);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tally .wrap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-block:10px;flex-wrap:wrap}
+.score{display:flex;align-items:baseline;gap:7px;font-variant-numeric:tabular-nums}
+.score .num{font-family:var(--mono);font-size:24px;font-weight:600}
+.score .of{color:var(--muted);font-size:13px}
+.pill{font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--ink)}
+.pill.pending{background:var(--warn-soft);color:var(--warn)}
+.pill.sent{background:var(--ok-soft);color:var(--ok)}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--sheet);color:var(--ink);font:600 14px var(--font);padding:10px 14px;border-radius:9px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{color:var(--danger)}
+.btn[disabled]{opacity:.5}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--sheet);padding:10px 16px;border-radius:9px;font-weight:600;font-size:14px;z-index:9;max-width:90vw;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.stat span{display:block;font-size:12px;color:var(--muted)}
+.stat b{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums}
+.cards{display:grid;gap:8px}
+.card{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:11px 13px;display:grid;gap:4px;text-align:left;font:inherit;color:inherit;width:100%}
+.card .top{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.card .meta{font-size:13px;color:var(--muted);font-family:var(--mono)}
+.empty{padding:26px 14px;text-align:center;color:var(--muted);background:var(--sheet);border:1px dashed var(--line);border-radius:12px}
+.empty b{display:block;color:var(--ink);margin-bottom:4px}
+.tools{display:grid;gap:8px;margin-top:16px}
+.tools h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:8px 0 0}
+.settings .field{border-bottom:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand"><b>Fiche Calcanéum</b><div class="sync" id="sync"><span class="dot" id="sync-dot"></span><span id="sync-txt">Toutes les fiches sont envoyées</span></div></div>
+    <div class="tabs" role="tablist">
+      <button id="tab-form" role="tab" aria-selected="true">Saisie</button>
+      <button id="tab-list" role="tab" aria-selected="false">Fiches<span class="count" id="count">0</span></button>
+      <button id="tab-set" role="tab" aria-selected="false">Réglages</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="install" class="notice warn" hidden></div>
+  <div id="view-form">
+    <div id="editing" class="notice row" hidden></div>
+    <div id="setup-warn" class="notice warn" hidden>Indiquez votre nom dans l'onglet Réglages avant la première fiche.</div>
+    <div id="eligibility" class="notice warn" hidden>Un critère d'inclusion n'est pas rempli : ce patient ne doit pas être inclus.</div>
+    <form id="form" autocomplete="off" onsubmit="return false"></form>
+  </div>
+
+  <div id="view-list" hidden>
+    <div class="stats" id="stats"></div>
+    <div class="cards" id="cards"></div>
+    <div id="list-empty" class="empty"><b>Aucune fiche pour l'instant.</b>Les fiches enregistrées depuis l'onglet Saisie apparaissent ici.</div>
+    <div class="tools">
+      <button class="btn primary" type="button" id="sync-now">Envoyer les fiches en attente</button>
+      <h3>Secours (sans connexion)</h3>
+      <button class="btn" type="button" id="share-json">Partager mes fiches par fichier (WhatsApp, e-mail…)</button>
+      <h3>Professeur</h3>
+      <label class="btn" for="import-file" style="text-align:center">Importer un fichier de fiches reçu</label>
+      <input type="file" id="import-file" accept=".json,application/json,text/plain" hidden>
+      <button class="btn" type="button" id="share-csv">Exporter toutes les fiches en tableau (CSV)</button>
+    </div>
+  </div>
+
+  <div id="view-set" hidden>
+    <section class="block settings">
+      <h2><span>Réglages</span></h2>
+      <div class="field"><label class="lab" for="set-resident">Votre nom (résident)</label><input type="text" id="set-resident"></div>
+      <div class="field"><label class="lab" for="set-url">Adresse d'envoi (Google Sheets) <span class="hint">Déjà réglée si le professeur l'a intégrée à l'application.</span></label><input type="url" id="set-url" placeholder="https://script.google.com/macros/s/…/exec"></div>
+      <div class="field"><div class="actions"><button class="btn primary" type="button" id="set-save">Enregistrer</button><button class="btn" type="button" id="set-test">Tester la connexion</button></div><div class="hint" id="set-msg"></div></div>
+    </section>
+    <p class="hint">Les fiches restent enregistrées sur ce téléphone et partent automatiquement dès qu'une connexion est disponible. Ne désinstallez pas l'application tant que des fiches sont « en attente ».</p>
+  </div>
+</main>
+
+<div class="tally" id="tally">
+  <div class="wrap">
+    <div class="score"><span class="of">AOFAS</span><span class="num" id="aofas">–</span><span class="of">/100</span><span class="pill" id="aofas-class" hidden></span><span class="of" id="aofas-progress"></span></div>
+    <div class="actions">
+      <button class="btn" type="button" id="reset">Effacer</button>
+      <button class="btn primary" type="button" id="save">Enregistrer</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+/* ====== À RÉGLER PAR LE PROFESSEUR AVANT DE COMPILER ====== */
+const SYNC_URL_DEFAULT = "https://script.google.com/macros/s/AKfycbz_-e4_p9lsfSs9F4S7shQ6UbulDSOG2E9Gfnh4pJQWmFMGlyQNuzVFzspbBEkKB4VZ/exec";   // adresse .../exec obtenue lors du déploiement du script
+const TOKEN = "calc-ehsb-f6ebed7e7fff703ac844";               // doit être identique au TOKEN du script Google
+/* ========================================================== */
+
+const YN=["Oui","Non"], BOHLER=["≥ 20°","15–19°","0–14°","< 0°"];
+const AOFAS_ITEMS=[
+  {k:"a_douleur",label:"Douleur",opts:[["Aucune",40],["Légère, occasionnelle",30],["Modérée, quotidienne",20],["Sévère, quasi permanente",0]]},
+  {k:"a_activite",label:"Limitation d'activité, aide à la marche",opts:[["Aucune limitation, pas d'aide",10],["Limitation des loisirs seulement",7],["Vie quotidienne et loisirs limités, canne",4],["Limitation sévère, béquilles, déambulateur ou fauteuil",0]]},
+  {k:"a_perimetre",label:"Périmètre de marche",opts:[["> 600 m",5],["400–600 m",4],["100–300 m",2],["< 100 m",0]]},
+  {k:"a_terrain",label:"Terrain",opts:[["Aucune difficulté",5],["Difficulté en terrain irrégulier, escaliers, pentes",3],["Difficulté sévère en terrain irrégulier, escaliers, pentes",0]]},
+  {k:"a_boiterie",label:"Boiterie",opts:[["Absente ou discrète",8],["Évidente",4],["Marquée",0]]},
+  {k:"a_sagittal",label:"Mobilité sagittale de la cheville (flexion + extension)",opts:[["≥ 30°",8],["15–29°",4],["< 15°",0]]},
+  {k:"a_soustal",label:"Mobilité sous-talienne (inversion + éversion)",opts:[["75–100 % du normal",6],["25–74 %",3],["< 25 %",0]]},
+  {k:"a_stabilite",label:"Stabilité cheville – arrière-pied",opts:[["Stable",8],["Instable",0]]},
+  {k:"a_alignement",label:"Alignement",opts:[["Bon, pied plantigrade",10],["Moyen, désaxation asymptomatique",5],["Mauvais, pied non plantigrade, symptomatique",0]]},
+];
+const TRAVAIL_REPRIS=["Même poste","Poste aménagé","Changement de métier"];
+const SECTIONS=[
+  {title:"Identification",fields:[
+    {k:"dossier",label:"N° de dossier",type:"text"},
+    {k:"initiales",label:"Initiales du patient",type:"text",hint:"Ni nom ni téléphone dans l'application."},
+    {k:"dateRevue",label:"Date de la revue",type:"date"},
+  ]},
+  {title:"Critères d'inclusion",fields:[
+    {k:"inc_fracture",label:"Fracture du calcanéum",type:"one",opts:YN},
+    {k:"inc_ortho",label:"Traitement orthopédique initial",type:"one",opts:YN},
+    {k:"inc_isolee",label:"Aucune autre lésion du même membre",type:"one",opts:YN},
+    {k:"_recul",label:"Recul ≥ 12 mois",type:"auto"},
+  ]},
+  {title:"1 · Données démographiques",fields:[
+    {k:"age",label:"Âge à l'accident",type:"number",unit:"ans"},
+    {k:"sexe",label:"Sexe",type:"one",opts:["Homme","Femme"]},
+    {k:"cote",label:"Côté atteint",type:"one",opts:["Droit","Gauche","Bilatéral"]},
+    {k:"profession",label:"Profession",type:"one",opts:["Travail de force","Travail léger / sédentaire","Sans activité / retraité","Étudiant"]},
+    {k:"accTravail",label:"Accident du travail",type:"one",opts:YN},
+    {k:"tabac",label:"Tabac",type:"one",opts:YN},
+    {k:"diabete",label:"Diabète",type:"one",opts:YN},
+    {k:"comorb",label:"Autre comorbidité",type:"one",opts:["Non","Oui"]},
+    {k:"comorbTxt",label:"Laquelle",type:"text",when:v=>v.comorb==="Oui"},
+  ]},
+  {title:"2 · Accident",fields:[
+    {k:"dateAccident",label:"Date de l'accident",type:"date"},
+    {k:"mecanisme",label:"Mécanisme",type:"one",opts:["Chute < 2 m","Chute ≥ 2 m","Accident de la voie publique","Autre"]},
+    {k:"ouverture",label:"Ouverture cutanée",type:"one",opts:["Fracture fermée","Fracture ouverte"]},
+    {k:"gustilo",label:"Gustilo",type:"one",opts:["I","II","III"],when:v=>v.ouverture==="Fracture ouverte"},
+    {k:"lesionDistance",label:"Lésion associée à distance",type:"one",opts:["Aucune","Rachis","Autre"]},
+  ]},
+  {title:"3 · Radiologie initiale",fields:[
+    {k:"imagerie",label:"Imagerie disponible",type:"one",opts:["Radiographies seules","Radiographies + TDM"]},
+    {k:"siege",label:"Siège",type:"one",opts:["Extra-articulaire","Intra-articulaire (thalamique)"]},
+    {k:"essex",label:"Essex-Lopresti",type:"one",opts:["Languette","Enfoncement thalamique","Non applicable"]},
+    {k:"sanders",label:"Sanders (TDM)",type:"one",opts:["I","II","III","IV"],when:v=>v.imagerie==="Radiographies + TDM"},
+    {k:"bohlerInit",label:"Angle de Böhler initial",type:"one",opts:BOHLER},
+  ]},
+  {title:"4 · Traitement orthopédique",fields:[
+    {k:"methode",label:"Méthode",type:"one",opts:["Botte plâtrée","Botte / attelle amovible","Traitement fonctionnel (repos, glace, surélévation)"]},
+    {k:"immob",label:"Durée d'immobilisation",type:"one",opts:["< 4 sem","4–6 sem","6–8 sem","> 8 sem"]},
+    {k:"appui",label:"Délai d'appui complet",type:"one",opts:["< 6 sem","6–8 sem","8–12 sem","> 12 sem"]},
+    {k:"reeduc",label:"Rééducation",type:"one",opts:YN},
+    {k:"anticoag",label:"Anticoagulation préventive",type:"one",opts:YN},
+  ]},
+  {title:"5 · Complications et évolution",fields:[
+    {k:"complications",label:"Complications",type:"many",hint:"Plusieurs choix possibles",opts:["Aucune","TVP / embolie pulmonaire","Algodystrophie (SDRC)","Complication cutanée","Conflit sous-malléolaire latéral / tendinite des fibulaires","Cal vicieux symptomatique"]},
+    {k:"chirSec",label:"Chirurgie secondaire",type:"one",opts:["Non","Arthrodèse sous-talienne","Autre"]},
+    {k:"chirSecDelai",label:"Délai de la chirurgie secondaire",type:"number",unit:"mois",when:v=>v.chirSec&&v.chirSec!=="Non"},
+  ]},
+  {title:"6 · Résultat clinique au dernier recul",fields:[
+    {k:"_recul2",label:"Recul",type:"auto"},
+    {k:"eva",label:"Douleur (EVA)",type:"scale"},
+    {k:"chaussage",label:"Chaussage",type:"one",opts:["Chaussures habituelles","Chaussures plus larges","Chaussures orthopédiques"]},
+    {k:"travail",label:"Travail",type:"one",opts:["Même poste","Poste aménagé","Changement de métier","Pas de reprise","Sans objet"]},
+    {k:"delaiReprise",label:"Délai de reprise du travail",type:"one",opts:["< 3 mois","3–6 mois","6–12 mois","> 12 mois"],when:v=>TRAVAIL_REPRIS.includes(v.travail)},
+    {k:"sport",label:"Sport / loisirs",type:"one",opts:["Même niveau","Niveau réduit","Arrêt","Non applicable"]},
+    {k:"talonElargi",label:"Talon élargi",type:"one",opts:YN},
+    {k:"douleurLat",label:"Douleur sous-malléolaire latérale",type:"one",opts:YN},
+    {k:"axe",label:"Axe de l'arrière-pied",type:"one",opts:["Normal","Valgus","Varus"]},
+    {k:"satisfaction",label:"Satisfaction du patient",type:"one",opts:["Très satisfait","Satisfait","Peu satisfait","Insatisfait"]},
+  ]},
+  {title:"7 · Score AOFAS cheville – arrière-pied",aofas:true,fields:AOFAS_ITEMS.map(i=>({k:i.k,label:i.label,type:"aofas",item:i}))},
+  {title:"8 · Radiologie au dernier recul",fields:[
+    {k:"bohlerRecul",label:"Angle de Böhler actuel",type:"one",opts:BOHLER},
+    {k:"arthroseST",label:"Arthrose sous-talienne",type:"one",opts:["Absente","Modérée (pincement)","Sévère","Arthrodèse"]},
+    {k:"arthroseCC",label:"Arthrose calcanéo-cuboïdienne",type:"one",opts:YN},
+    {k:"elargissement",label:"Élargissement du calcanéum (incidence axiale)",type:"one",opts:YN},
+  ]},
+  {title:"Remarques",fields:[{k:"remarques",label:"Remarques",type:"textarea"}]},
+];
+const ALL=SECTIONS.flatMap(s=>s.fields).filter(f=>f.type!=="auto");
+
+/* ---------- stockage local ---------- */
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function lsGet(k,def){try{const v=localStorage.getItem(k);return v==null?def:JSON.parse(v);}catch(e){return def;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+let fiches=lsGet("fiches",[]);          // [{id, data, status:'pending'|'sent'|'imported'|'delete', updatedAt}]
+let settings=lsGet("settings",{});
+let values=lsGet("draft",{});
+let editingId=null;
+const syncUrl=()=>(settings.url&&settings.url.trim())||(/^https:/.test(SYNC_URL_DEFAULT)?SYNC_URL_DEFAULT:"");
+function persist(){lsSet("fiches",fiches);}
+
+/* ---------- calculs ---------- */
+function monthsBetween(a,b){
+  if(!a||!b)return null; const d1=new Date(a),d2=new Date(b);
+  if(isNaN(d1)||isNaN(d2)||d2<d1)return null;
+  let m=(d2.getFullYear()-d1.getFullYear())*12+(d2.getMonth()-d1.getMonth()); if(d2.getDate()<d1.getDate())m--; return m;
+}
+function aofas(v){let t=0,d=0;for(const it of AOFAS_ITEMS){const c=it.opts.find(o=>o[0]===v[it.k]);if(c){t+=c[1];d++;}}return{total:t,done:d,complete:d===AOFAS_ITEMS.length};}
+const aofasClass=t=>t>=90?"Excellent":t>=80?"Bon":t>=70?"Moyen":"Mauvais";
+
+/* ---------- formulaire ---------- */
+function renderField(f){
+  if(f.when&&!f.when(values))return"";
+  const id="f_"+f.k, v=values[f.k];
+  const hint=f.hint?` <span class="hint">${esc(f.hint)}</span>`:"";
+  const isInput=["text","number","date","textarea"].includes(f.type);
+  const lab=isInput?`<label class="lab" for="${id}">${esc(f.label)}${hint}</label>`:`<div class="lab" id="${id}-l">${esc(f.label)}${hint}</div>`;
+  let body="";
+  if(f.type==="one"||f.type==="many"){
+    body=`<div class="chips" role="group" aria-labelledby="${id}-l">`+f.opts.map(o=>{const on=f.type==="many"?Array.isArray(v)&&v.includes(o):v===o;return`<button type="button" class="chip" data-k="${f.k}" data-v="${esc(o)}" aria-pressed="${on}">${esc(o)}</button>`;}).join("")+`</div>`;
+  }else if(f.type==="aofas"){
+    body=`<div class="chips" role="group" aria-labelledby="${id}-l">`+f.item.opts.map(([o,p])=>`<button type="button" class="chip" data-k="${f.k}" data-v="${esc(o)}" aria-pressed="${v===o}">${esc(o)}<span class="pts">${p}</span></button>`).join("")+`</div>`;
+  }else if(f.type==="scale"){
+    body=`<div class="chips scale" role="group" aria-labelledby="${id}-l">`+Array.from({length:11},(_,i)=>`<button type="button" class="chip" data-k="${f.k}" data-v="${i}" aria-pressed="${String(v)===String(i)}">${i}</button>`).join("")+`</div>`;
+  }else if(f.type==="text"){body=`<input type="text" id="${id}" data-k="${f.k}" value="${esc(v)}">`;}
+  else if(f.type==="number"){body=`<div style="display:flex;align-items:center;gap:8px"><input type="number" inputmode="numeric" min="0" id="${id}" data-k="${f.k}" value="${esc(v)}"><span class="auto">${esc(f.unit||"")}</span></div>`;}
+  else if(f.type==="date"){body=`<input type="date" id="${id}" data-k="${f.k}" value="${esc(v)}">`;}
+  else if(f.type==="textarea"){body=`<textarea id="${id}" data-k="${f.k}">${esc(v)}</textarea>`;}
+  else if(f.type==="auto"){
+    const r=monthsBetween(values.dateAccident,values.dateRevue);
+    if(f.k==="_recul")body=r==null?`<span class="auto">Calculé à partir des dates de l'accident et de la revue</span>`:`<span class="auto"><b>${r>=12?"Oui":"Non"}</b> · ${r} mois</span>`;
+    else body=r==null?`<span class="auto">Renseignez la date de l'accident et la date de la revue</span>`:`<span class="auto"><b>${r} mois</b></span>`;
+  }
+  return`<div class="field">${lab}${body}</div>`;
+}
+function renderForm(){
+  const focus=document.activeElement&&document.activeElement.id;
+  $("form").innerHTML=SECTIONS.map(s=>{let extra="";if(s.aofas){const a=aofas(values);extra=`<small>${a.done}/9 · ${a.done?a.total:"–"} pts</small>`;}return`<section class="block"><h2><span>${esc(s.title)}</span>${extra}</h2>${s.fields.map(renderField).join("")}</section>`;}).join("");
+  if(focus){const el=$(focus);if(el&&el.tagName!=="BUTTON")el.focus();}
+  updateTally();
+}
+function updateTally(){
+  const a=aofas(values);
+  $("aofas").textContent=a.done?a.total:"–";
+  const c=$("aofas-class"); if(a.complete){c.hidden=false;c.textContent=aofasClass(a.total);}else c.hidden=true;
+  $("aofas-progress").textContent=a.complete?"":`${a.done}/9`;
+  const r=monthsBetween(values.dateAccident,values.dateRevue);
+  $("eligibility").hidden=!(["inc_fracture","inc_ortho","inc_isolee"].some(k=>values[k]==="Non")||(r!=null&&r<12));
+  $("setup-warn").hidden=!!(settings.resident&&settings.resident.trim());
+  if(!editingId)lsSet("draft",values);
+}
+$("form").addEventListener("click",e=>{
+  const b=e.target.closest(".chip");if(!b)return;
+  const k=b.dataset.k,val=b.dataset.v,f=ALL.find(x=>x.k===k);
+  if(f.type==="many"){let arr=Array.isArray(values[k])?values[k].slice():[];if(arr.includes(val))arr=arr.filter(x=>x!==val);else if(val==="Aucune")arr=["Aucune"];else{arr=arr.filter(x=>x!=="Aucune");arr.push(val);}values[k]=arr;}
+  else if(f.type==="scale")values[k]=String(values[k])===val?undefined:Number(val);
+  else values[k]=values[k]===val?undefined:val;
+  const y=window.scrollY;renderForm();window.scrollTo(0,y);
+});
+$("form").addEventListener("input",e=>{
+  const k=e.target.dataset.k;if(!k)return;const f=ALL.find(x=>x.k===k);
+  values[k]=f.type==="number"?(e.target.value===""?undefined:Number(e.target.value)):e.target.value;
+  if(f.type==="date"){const y=window.scrollY;renderForm();window.scrollTo(0,y);}else updateTally();
+});
+function clean(v){const out={};for(const f of ALL){if(f.when&&!f.when(v))continue;const x=v[f.k];if(x!==undefined&&x!==""&&!(Array.isArray(x)&&!x.length))out[f.k]=x;}return out;}
+function newId(){return "F"+Date.now().toString(36).toUpperCase()+Math.random().toString(36).slice(2,6).toUpperCase();}
+
+function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2800);}
+
+$("save").onclick=()=>{
+  if(!settings.resident||!settings.resident.trim()){toast("Indiquez d'abord votre nom dans Réglages.");showView("set");return;}
+  if(!values.dossier||!String(values.dossier).trim()){toast("Indiquez le n° de dossier.");const el=$("f_dossier");if(el){el.focus();el.scrollIntoView({block:"center"});}return;}
+  const data=clean(values); const now=new Date().toISOString();
+  if(editingId){const f=fiches.find(x=>x.id===editingId);f.data=data;f.updatedAt=now;if(f.status!=="imported")f.status="pending";}
+  else fiches.unshift({id:newId(),data,resident:settings.resident.trim(),createdAt:now,updatedAt:now,status:"pending"});
+  persist(); toast(editingId?"Modifications enregistrées":"Fiche enregistrée");
+  setEditing(null); values={}; lsSet("draft",{}); renderForm(); renderList(); window.scrollTo(0,0);
+  syncAll();
+};
+$("reset").onclick=()=>{
+  const b=$("reset");
+  if(b.dataset.c!=="1"){b.dataset.c="1";b.textContent="Confirmer";setTimeout(()=>{b.dataset.c="";b.textContent="Effacer";},3000);return;}
+  b.dataset.c="";b.textContent="Effacer";setEditing(null);values={};lsSet("draft",{});renderForm();window.scrollTo(0,0);
+};
+function setEditing(id){
+  editingId=id;const box=$("editing");
+  if(!id){box.hidden=true;$("save").textContent="Enregistrer";return;}
+  const f=fiches.find(x=>x.id===id);
+  box.hidden=false;
+  box.innerHTML=`<span>Modification : <b>${esc(f.data.dossier||"")}${f.data.initiales?" · "+esc(f.data.initiales):""}</b></span><span class="actions"><button type="button" class="btn danger" id="del">Supprimer</button><button type="button" class="btn" id="cancel-edit">Nouvelle fiche</button></span>`;
+  $("save").textContent="Enregistrer les modifications";
+  $("cancel-edit").onclick=()=>{setEditing(null);values=lsGet("draft",{});renderForm();};
+  $("del").onclick=()=>{
+    const d=$("del");if(d.dataset.c!=="1"){d.dataset.c="1";d.textContent="Confirmer la suppression";return;}
+    const f=fiches.find(x=>x.id===editingId);
+    if(f.status==="sent"||(f.status==="pending"&&f.everSent)){f.status="delete";}else fiches=fiches.filter(x=>x.id!==editingId);
+    persist();toast("Fiche supprimée");setEditing(null);values={};renderForm();renderList();syncAll();
+  };
+}
+
+/* ---------- liste ---------- */
+const visible=()=>fiches.filter(f=>f.status!=="delete");
+function fmtDate(d){if(!d)return"–";const[y,m,j]=String(d).split("-");return j?`${j}/${m}/${y}`:d;}
+const statusLabel={pending:["En attente","pending"],sent:["Envoyée","sent"],imported:["Importée",""]};
+function renderList(){
+  const list=visible();
+  $("count").textContent=list.length;
+  $("list-empty").hidden=list.length>0;
+  $("cards").innerHTML=list.map(f=>{
+    const d=f.data,a=aofas(d),r=monthsBetween(d.dateAccident,d.dateRevue),[sl,sc]=statusLabel[f.status]||["",""];
+    return`<button type="button" class="card" data-id="${esc(f.id)}"><span class="top"><b>${esc(d.dossier||"–")}${d.initiales?" · "+esc(d.initiales):""}</b><span class="pill ${sc}">${sl}</span></span><span class="meta">Revue ${fmtDate(d.dateRevue)} · recul ${r!=null?r+" m":"–"} · EVA ${d.eva!=null?d.eva:"–"} · AOFAS ${a.complete?a.total:"–"}</span>${f.resident?`<span class="meta">${esc(f.resident)}</span>`:""}</button>`;
+  }).join("");
+  const ao=list.map(f=>aofas(f.data)).filter(a=>a.complete).map(a=>a.total);
+  const ev=list.filter(f=>f.data.eva!=null).map(f=>f.data.eva);
+  const arth=list.filter(f=>f.data.chirSec==="Arthrodèse sous-talienne").length;
+  const mean=a=>a.length?(a.reduce((x,y)=>x+y,0)/a.length).toFixed(1).replace(".",","):"–";
+  $("stats").innerHTML=[["Fiches",list.length],["AOFAS moyen",mean(ao)],["EVA moyenne",mean(ev)],["Arthrodèse secondaire",list.length?`${arth} (${Math.round(arth/list.length*100)} %)`:"–"]].map(([l,v])=>`<div class="stat"><span>${l}</span><b>${v}</b></div>`).join("");
+  const pending=fiches.filter(f=>f.status==="pending"||f.status==="delete").length;
+  $("sync-dot").className="dot"+(pending?" pending":"");
+  $("sync-txt").textContent=!syncUrl()?"Envoi automatique non configuré":pending?`${pending} fiche${pending>1?"s":""} en attente d'envoi`:"Toutes les fiches sont envoyées";
+}
+$("cards").addEventListener("click",e=>{const c=e.target.closest(".card");if(!c)return;const f=fiches.find(x=>x.id===c.dataset.id);values=JSON.parse(JSON.stringify(f.data));setEditing(f.id);renderForm();showView("form");window.scrollTo(0,0);});
+
+/* ---------- tableau (colonnes communes : Google Sheets et CSV) ---------- */
+function columns(){return[["resident","Résident"],...ALL.filter(f=>f.type!=="aofas").map(f=>[f.k,f.label]),...AOFAS_ITEMS.map(i=>[i.k,"AOFAS – "+i.label]),["_recul","Recul (mois)"],["_aofas","AOFAS total"],["_classe","AOFAS classe"],["createdAt","Créée le"],["updatedAt","Modifiée le"]];}
+function rowValues(f){
+  const d=f.data,a=aofas(d);
+  return columns().map(([k])=>{
+    if(k==="resident")return f.resident||"";
+    if(k==="_recul"){const r=monthsBetween(d.dateAccident,d.dateRevue);return r==null?"":r;}
+    if(k==="_aofas")return a.complete?a.total:"";
+    if(k==="_classe")return a.complete?aofasClass(a.total):"";
+    if(k==="createdAt"||k==="updatedAt")return f[k]||"";
+    const it=AOFAS_ITEMS.find(i=>i.k===k);
+    if(it){const o=it.opts.find(x=>x[0]===d[k]);return o?o[1]:"";}
+    const v=d[k];return Array.isArray(v)?v.join(" | "):(v==null?"":v);
+  });
+}
+
+/* ---------- envoi vers Google Sheets ---------- */
+const pendingCb={};
+window.__bridgeDone=function(id,ok,body){const cb=pendingCb[id];if(cb){delete pendingCb[id];cb(ok,body);}};
+function post(url,payload){
+  return new Promise(resolve=>{
+    const body=JSON.stringify(payload);
+    if(window.Android&&window.Android.post){const id="c"+Math.random().toString(36).slice(2);pendingCb[id]=(ok,txt)=>{let j=null;try{j=JSON.parse(txt);}catch(e){}resolve(ok&&j&&j.ok===true?{ok:true}:{ok:false,msg:j&&j.error||txt});};window.Android.post(url,body,id);}
+    else{
+      if(navigator.onLine===false){resolve({ok:false,msg:"hors ligne"});return;}
+      fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body,redirect:"follow"})
+        .then(r=>r.text()).then(t=>{let j=null;try{j=JSON.parse(t);}catch(e){}resolve(j&&j.ok===true?{ok:true}:{ok:false,msg:j&&j.error||"réponse inattendue"});})
+        .catch(()=>{ // réponse illisible (CORS) : la fiche est quand même reçue ; le script remplace la ligne si elle est renvoyée
+          fetch(url,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body}).then(()=>resolve({ok:true})).catch(e=>resolve({ok:false,msg:String(e)}));
+        });
+    }
+  });
+}
+let syncing=false;
+async function syncAll(manual){
+  const url=syncUrl();
+  if(!url){if(manual)toast("Adresse d'envoi non réglée (onglet Réglages).");return;}
+  if(syncing)return; syncing=true;
+  let sent=0,failed=0,lastErr="";
+  const cols=columns().map(c=>c[1]);
+  for(const f of fiches.slice()){
+    if(f.status!=="pending"&&f.status!=="delete")continue;
+    const res=await post(url,{token:TOKEN,id:f.id,deleted:f.status==="delete",columns:cols,values:f.status==="delete"?[]:rowValues(f)});
+    if(res.ok){if(f.status==="delete")fiches=fiches.filter(x=>x.id!==f.id);else{f.status="sent";f.everSent=true;}sent++;persist();}
+    else{failed++;lastErr=res.msg||"";break;}
+  }
+  syncing=false; renderList();
+  if(manual){toast(failed?("Envoi impossible pour l'instant"+(lastErr==="token"?" : code d'étude refusé.":". Vérifiez la connexion.")):sent?`${sent} fiche${sent>1?"s":""} envoyée${sent>1?"s":""}`:"Rien à envoyer");}
+}
+$("sync-now").onclick=()=>syncAll(true);
+window.addEventListener("online",()=>syncAll());
+setInterval(()=>syncAll(),5*60*1000);
+
+/* ---------- secours : fichiers ---------- */
+function share(filename,content,mime){
+  if(window.Android&&window.Android.share){window.Android.share(filename,content,mime);return;}
+  try{
+    const file=new File([content],filename,{type:mime});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:filename}).catch(()=>{});return;}
+  }catch(e){}
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([content],{type:mime}));a.download=filename;document.body.appendChild(a);a.click();a.remove();
+}
+const stamp=()=>new Date().toISOString().slice(0,10);
+const slug=s=>String(s||"resident").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"");
+$("share-json").onclick=()=>{
+  const list=visible();if(!list.length){toast("Aucune fiche à partager.");return;}
+  share(`fiches-calcaneum-${slug(settings.resident)}-${stamp()}.json`,JSON.stringify({app:"fiche-calcaneum",version:1,exportedAt:new Date().toISOString(),fiches:list.map(({id,data,resident,createdAt,updatedAt})=>({id,data,resident,createdAt,updatedAt}))}),"application/json");
+};
+$("import-file").addEventListener("change",async e=>{
+  const file=e.target.files&&e.target.files[0];e.target.value="";if(!file)return;
+  try{
+    const j=JSON.parse(await file.text());
+    if(!j||j.app!=="fiche-calcaneum"||!Array.isArray(j.fiches))throw new Error("format");
+    let added=0,updated=0;
+    for(const g of j.fiches){
+      if(!g||!g.id||!g.data)continue;
+      const cur=fiches.find(x=>x.id===g.id);
+      if(!cur){fiches.push({id:g.id,data:g.data,resident:g.resident,createdAt:g.createdAt,updatedAt:g.updatedAt,status:"imported"});added++;}
+      else if((g.updatedAt||"")>(cur.updatedAt||"")){cur.data=g.data;cur.updatedAt=g.updatedAt;updated++;}
+    }
+    persist();renderList();toast(`${added} fiche${added>1?"s":""} ajoutée${added>1?"s":""}${updated?`, ${updated} mise${updated>1?"s":""} à jour`:""}`);
+  }catch(err){toast("Ce fichier n'est pas un export de Fiche Calcanéum.");}
+});
+function csvCell(v){v=String(v??"");return/[;"\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+$("share-csv").onclick=()=>{
+  const list=visible();if(!list.length){toast("Aucune fiche à exporter.");return;}
+  const lines=[["ID",...columns().map(c=>c[1])].map(csvCell).join(";"),...list.map(f=>[f.id,...rowValues(f)].map(csvCell).join(";"))];
+  share(`fiches-calcaneum-${stamp()}.csv`,"﻿"+lines.join("\r\n"),"text/csv");
+};
+
+/* ---------- réglages ---------- */
+function fillSettings(){$("set-resident").value=settings.resident||"";$("set-url").value=settings.url||(/^https:/.test(SYNC_URL_DEFAULT)?SYNC_URL_DEFAULT:"");}
+$("set-save").onclick=()=>{
+  settings.resident=$("set-resident").value.trim();
+  const u=$("set-url").value.trim();
+  if(u&&!/^https:\/\/script\.google\.com\//.test(u)){$("set-msg").textContent="L'adresse doit commencer par https://script.google.com/";return;}
+  settings.url=u===SYNC_URL_DEFAULT?"":u;lsSet("settings",settings);$("set-msg").textContent="Réglages enregistrés.";updateTally();renderList();syncAll();
+};
+$("set-test").onclick=async()=>{
+  const url=$("set-url").value.trim()||syncUrl();
+  if(!url){$("set-msg").textContent="Aucune adresse d'envoi.";return;}
+  $("set-msg").textContent="Test en cours…";
+  const r=await post(url,{token:TOKEN,ping:true});
+  $("set-msg").textContent=r.ok?"Connexion réussie : le tableau Google reçoit bien les fiches.":"Échec : "+(r.msg==="token"?"code d'étude refusé (TOKEN différent dans le script).":"vérifiez l'adresse et la connexion internet.");
+};
+
+/* ---------- navigation ---------- */
+let view="form";
+function showView(w){
+  view=w;
+  $("view-form").hidden=w!=="form";$("view-list").hidden=w!=="list";$("view-set").hidden=w!=="set";$("tally").hidden=w!=="form";
+  $("tab-form").setAttribute("aria-selected",w==="form");$("tab-list").setAttribute("aria-selected",w==="list");$("tab-set").setAttribute("aria-selected",w==="set");
+  if(w==="set")fillSettings();
+  window.scrollTo(0,0);
+}
+$("tab-form").onclick=()=>showView("form");$("tab-list").onclick=()=>showView("list");$("tab-set").onclick=()=>showView("set");
+window.onAndroidBack=function(){if(view!=="form"){showView("form");return true;}if(editingId){setEditing(null);values=lsGet("draft",{});renderForm();return true;}return false;};
+
+renderForm();renderList();
+if(!settings.resident)showView("set");
+
+/* ---------- version web : hors ligne et installation ---------- */
+const standalone=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia("(display-mode: standalone)").matches);
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+if(!window.Android&&!standalone&&location.protocol.startsWith("http")){
+  const b=$("install");b.hidden=false;
+  b.innerHTML=isIOS?"<b>Installez l'application avant de saisir des fiches :</b> touchez le bouton Partager de Safari, puis « Sur l'écran d'accueil », puis ouvrez Fiche Calcanéum depuis cette icône.":"<b>Installez l'application :</b> menu ⋮ de Chrome, puis « Installer l'application » ou « Ajouter à l'écran d'accueil ».";
+}
+if("serviceWorker" in navigator&&location.protocol.startsWith("http")){navigator.serviceWorker.register("sw.js").catch(()=>{});}
+if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(()=>{});}
+setTimeout(()=>syncAll(),1500);
+})();
+</script>
+</body>
+</html>
